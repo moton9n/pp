@@ -1,8 +1,6 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
-//require('dotenv').config(); // Load .env variables
-
 const app = express();
 
 const CDN_BASE = process.env.CDN_BASE;
@@ -12,7 +10,6 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like Postman or curl)
     if (!origin || ALLOWED_ORIGINS.includes(origin)) {
       callback(null, true);
     } else {
@@ -22,14 +19,13 @@ app.use(cors({
 }));
 
 app.get('/pp', async (req, res) => {
-  const { url } = req.query;
-  console.log('url param', url)
+  const { u } = req.query;
 
-  if (!url || !url.startsWith('/')) {
+  if (!u || !u.startsWith('/')) {
     return res.status(400).send('Invalid or missing relative URL');
   }
 
-  const targetUrl = CDN_BASE.replace(/\/+$/, '') + url;
+  const targetUrl = CDN_BASE.replace(/\/+$/, '') + u;
 
   try {
     const response = await axios.get(targetUrl, { responseType: 'stream' });
